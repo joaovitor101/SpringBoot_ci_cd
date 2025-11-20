@@ -16,7 +16,7 @@ on:
       - 'README.md'       # Ignora mudanças apenas no README
       - 'docs/**'         # Ignora qualquer arquivo dentro da pasta 'docs'
       - 'LICENSE'         # Ignora o arquivo de licença
-      - 'CONTRIBUTING.md' # Ignora o guia de contribuição
+      - 'CONTRIBUTING.md' # Ignora o guia de contribuiçã
 
 # Lista de Jobs
 jobs:
