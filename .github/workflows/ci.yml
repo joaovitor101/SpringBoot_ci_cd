@@ -40,7 +40,7 @@ jobs:
 
     # Passo 3: Executar testes
     - name: Executar testes
-      run: ./mvnw -B verify --file pom.xml
+      run: mvn -B verify --file pom.xml
 
   cd:
     needs: ci
@@ -58,7 +58,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Gerar JAR para deploy
-      run: ./mvnw -B package --file pom.xml -DskipTests
+      run: mvn -B package --file pom.xml -DskipTests
 
     - name: Upload JAR para deploy
       uses: actions/upload-artifact@v4
