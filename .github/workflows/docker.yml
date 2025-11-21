@@ -1,60 +1,44 @@
-name: Docker Build and Push
+name: Docker Build & Push
 
 on:
   push:
     branches: ["docker"]
-    paths-ignore:
-      - 'README.md'
-      - 'docs/**'
-      - 'LICENSE'
-      - 'CONTRIBUTING.md'
+  workflow_dispatch:
 
 jobs:
-  docker:
+  test:
     runs-on: ubuntu-latest
-
+    container:
+      image: maven:3.9.6-eclipse-temurin-21
     steps:
-    - name: Checkout do código
+    - name: Checkout codigo
+      uses: actions/checkout@v4
+    
+    - name: Executar testes no container
+      run: mvn -B verify --file pom.xml
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout codigo
       uses: actions/checkout@v4
 
     - name: Configurar Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    # 🔓 Descomente se quiser push para Docker Hub
-    # - name: Login no Docker Hub
-    #   uses: docker/login-action@v3
-    #   with:
-    #     username: ${{ secrets.DOCKER_USERNAME }}
-    #     password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Login no Docker Hub
+      uses: docker/login-action@v3
+      with: 
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Extrair metadados
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: api-filosofia
-        tags: |
-          type=raw,value=latest
-          type=ref,event=branch
-          type=sha,prefix={{branch}}-
-
-    - name: Build da imagem Docker
+    - name: Build e Push para Docker Hub
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./Dockerfile
-        push: false
-        load: true
-        tags: api-filosofia:latest
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/api-filosofia:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
-
-    - name: Salvar imagem Docker
-      run: |
-        docker save api-filosofia:latest -o api-filosofia-image.tar
-
-    - name: Upload imagem Docker como artefato
-      uses: actions/upload-artifact@v4
-      with:
-        name: docker-image
-        path: api-filosofia-image.tar
-        retention-days: 7
