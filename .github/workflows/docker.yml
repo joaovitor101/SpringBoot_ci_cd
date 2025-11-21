@@ -1,10 +1,10 @@
 # Workflow para build e push da imagem Docker
 name: Docker Build and Push
 
-# Executa apenas na branch master
+# Executa apenas na branch docker
 on:
   push:
-    branches: ["master"]
+    branches: ["docker"]
     paths-ignore:
       - 'README.md'
       - 'docs/**'
