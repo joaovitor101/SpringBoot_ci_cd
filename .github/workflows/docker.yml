@@ -50,9 +50,9 @@ jobs:
 
     - name: Salvar imagem Docker
       run: |
-        FIRST_TAG=$(echo "${{ steps.meta.outputs.tags }}" | grep -v '^$' | head -n1)
-        echo "Usando tag: $FIRST_TAG"
-        docker save "$FIRST_TAG" -o api-filosofia-image.tar
+        TAG=$(echo "${{ steps.meta.outputs.tags }}" | grep 'latest' | head -n1 | tr -d ' ')
+        echo "Usando tag: $TAG"
+        docker save "$TAG" -o api-filosofia-image.tar
 
     - name: Upload imagem Docker como artefato
       uses: actions/upload-artifact@v4
