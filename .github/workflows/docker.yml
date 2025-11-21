@@ -33,9 +33,9 @@ jobs:
       with:
         images: api-filosofia
         tags: |
+          type=raw,value=latest
           type=ref,event=branch
           type=sha,prefix={{branch}}-
-          type=raw,value=latest
 
     - name: Build da imagem Docker
       uses: docker/build-push-action@v5
@@ -43,16 +43,14 @@ jobs:
         context: .
         file: ./Dockerfile
         push: false
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        load: true
+        tags: api-filosofia:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
     - name: Salvar imagem Docker
       run: |
-        TAG=$(echo "${{ steps.meta.outputs.tags }}" | grep 'latest' | head -n1 | tr -d ' ')
-        echo "Usando tag: $TAG"
-        docker save "$TAG" -o api-filosofia-image.tar
+        docker save api-filosofia:latest -o api-filosofia-image.tar
 
     - name: Upload imagem Docker como artefato
       uses: actions/upload-artifact@v4
